@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicorn — Pure Magic</title>
+    <style>
+        /* Design Tokens */
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a0a0b0;
+            --accent-1: #e0c3fc;
+            --accent-2: #8ec5fc;
+            --accent-3: #c2e9fb;
+            --glow: rgba(224, 195, 252, 0.3);
+            
+            /* Animation Easings */
+            --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Aurora Background Effect */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .aurora-blob:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            top: -200px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .aurora-blob:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(225deg, var(--accent-2), var(--accent-3));
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .aurora-blob:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, var(--accent-3), var(--accent-1));
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.02); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: navEnter 0.8s var(--ease-out-quint) forwards;
+            animation-delay: 0.2s;
+        }
+
+        @keyframes navEnter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: transform 0.3s var(--ease-out-quart);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            transition: width 0.3s var(--ease-out-quart);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(224, 195, 252, 0.1);
+            border: 1px solid rgba(224, 195, 252, 0.2);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--accent-1);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s var(--ease-out-quint) forwards;
+            animation-delay: 0.4s;
+        }
+
+        .hero-badge::before {
+            content: '✦';
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s var(--ease-out-quint) forwards;
+            animation-delay: 0.5s;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s var(--ease-out-quint) forwards;
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s var(--ease-out-quint) forwards;
+            animation-delay: 0.7s;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s var(--ease-out-quart);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: var(--bg-primary);
+            border: none;
+            box-shadow: 0 4px 20px var(--glow);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px var(--glow);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-1);
+            background: rgba(224, 195, 252, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+            animation-delay: 1.2s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .scroll-indicator span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--accent-1), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { transform: scaleY(1); opacity: 1; }
+            50% { transform: scaleY(0.5); opacity: 0.5; }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s var(--ease-out-quart);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(224, 195, 252, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s var(--ease-out-quart);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer .heart {
+            color: var(--accent-1);
+            animation: heartbeat 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .features {
+                padding: 4rem 1.5rem;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Aurora Background -->
+    <div class="aurora">
+        <div class="aurora-blob"></div>
+        <div class="aurora-blob"></div>
+        <div class="aurora-blob"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">✦ Unicorn</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Now in Beta</div>
+            <h1>Pure <span>Magic</span></h1>
+            <p>Experience the extraordinary. A minimalist approach to the impossible, where simplicity meets wonder.</p>
+            <div class="cta-group">
+                <a href="#" class="btn btn-primary">Start Creating</a>
+                <a href="#" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Unicorn?</h2>
+                <p>Everything you need, nothing you don't</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">◈</div>
+                    <h3>Effortless</h3>
+                    <p>Designed to feel invisible. Every interaction flows naturally, with no learning curve required.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">◉</div>
+                    <h3>Magical</h3>
+                    <p>Delight in every detail. Subtle animations and thoughtful touches that bring joy to everyday tasks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">◆</div>
+                    <h3>Minimal</h3>
+                    <p>Less is infinitely more. Stripped to its essence, focused on what truly matters.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Made with <span class="heart">♥</span> and a touch of magic</p>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll-triggered animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const featureObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Staggered entrance animation
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                        entry.target.style.transition = `all 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${index * 100}ms`;
+                    }, index * 100);
+                    featureObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            featureObserver.observe(card);
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Mouse parallax effect for aurora
+        const auroraBlobs = document.querySelectorAll('.aurora-blob');
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animateAurora() {
+            currentX += (mouseX - currentX) * 0.05;
+            currentY += (mouseY - currentY) * 0.05;
+
+            auroraBlobs.forEach((blob, index) => {
+                const factor = (index + 1) * 15;
+                blob.style.transform = `translate(${currentX * factor}px, ${currentY * factor}px)`;
+            });
+
+            requestAnimationFrame(animateAurora);
+        }
+
+        animateAurora();
+    </script>
+</body>
+</html>
